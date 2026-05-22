@@ -1,0 +1,460 @@
+{
+  "info": {
+    "_postman_id": "blockchain-api-collection-v2",
+    "name": "Blockchain API - Mit Wallets",
+    "description": "Complete Blockchain API Collection mit Wallet-System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "SETUP - Wallets",
+      "item": [
+        {
+          "name": "1. Status abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "status"]
+            },
+            "description": "Gibt schnelle Statusinformationen zur Blockchain zurück"
+          }
+        },
+        {
+          "name": "2. Alle Wallets abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/wallets",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "wallets"]
+            },
+            "description": "Zeigt alle existierenden Wallets mit ihrem Saldo"
+          }
+        },
+        {
+          "name": "3. Wallet erstellen - Tom",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\"Tom\""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/wallets",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "wallets"]
+            },
+            "description": "Erstellt eine neue Wallet für Tom (mit 0 BTC)"
+          }
+        },
+        {
+          "name": "4. Wallet erstellen - Julia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\"Julia\""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/wallets",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "wallets"]
+            },
+            "description": "Erstellt eine neue Wallet für Julia (mit 0 BTC)"
+          }
+        },
+        {
+          "name": "5. Saldo Tom abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/wallets/Tom",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "wallets", "Tom"]
+            },
+            "description": "Zeigt den Saldo von Tom (sollte 0 BTC sein)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "MINING - Bitcoins verdienen",
+      "item": [
+        {
+          "name": "1. Pending Transactions abrufen (VORHER)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/pending-transactions",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "pending-transactions"]
+            },
+            "description": "Zeige alle Transaktionen, die noch nicht gemined wurden (sollten 6 sein)"
+          }
+        },
+        {
+          "name": "2. Mining starten (1. Block)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/mine",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "mine"]
+            },
+            "description": "Startet den Mining-Prozess. Alle Pending Transactions werden gemined. Miner (System) bekommt 10 BTC Reward"
+          }
+        },
+        {
+          "name": "3. Saldo Tom nach Mining",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/wallets/Tom",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "wallets", "Tom"]
+            },
+            "description": "Saldo sollte sich geändert haben (wenn Tom in Genesis-Transaktionen ist)"
+          }
+        },
+        {
+          "name": "4. Pending Transactions abrufen (NACHHER)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/pending-transactions",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "pending-transactions"]
+            },
+            "description": "Zeige Pending Transactions nach Mining (sollten leer sein)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TRANSAKTIONEN - Mit Saldo-Validierung",
+      "item": [
+        {
+          "name": "1. Transaktion hinzufügen - Alice -> Tom (50 BTC)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sender\": \"Alice\",\n  \"receiver\": \"Tom\",\n  \"amount\": 50.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/transaction",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "transaction"]
+            },
+            "description": "Alice sendet 50 BTC an Tom (nur wenn Alice genug Saldo hat)"
+          }
+        },
+        {
+          "name": "2. Transaktion hinzufügen - Tom -> Julia (20 BTC)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sender\": \"Tom\",\n  \"receiver\": \"Julia\",\n  \"amount\": 20.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/transaction",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "transaction"]
+            },
+            "description": "Tom sendet 20 BTC an Julia"
+          }
+        },
+        {
+          "name": "3. ERROR TEST - Nicht genug Saldo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sender\": \"Julia\",\n  \"receiver\": \"Alice\",\n  \"amount\": 10000.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/transaction",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "transaction"]
+            },
+            "description": "Sollte fehlschlagen: Julia hat nicht 10000 BTC! (Error 400)"
+          }
+        },
+        {
+          "name": "4. Alle Pending Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/pending-transactions",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "pending-transactions"]
+            },
+            "description": "Zeige alle wartenden Transaktionen (sollten 2 sein)"
+          }
+        },
+        {
+          "name": "5. Mining starten (2. Block)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/mine",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "mine"]
+            },
+            "description": "Startet Mining. Die 2 Transaktionen werden ausgeführt und die Saldi aktualisiert"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BLOCKCHAIN - Daten anschauen",
+      "item": [
+        {
+          "name": "1. Alle Blöcke abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/blocks",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "blocks"]
+            },
+            "description": "Gibt alle Blöcke in der Blockchain zurück (sollten 3 sein: Genesis + 2 gemined)"
+          }
+        },
+        {
+          "name": "2. Block 0 abrufen (Genesis)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/blocks/0",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "blocks", "0"]
+            },
+            "description": "Gibt den Genesis Block (Index 0) zurück"
+          }
+        },
+        {
+          "name": "3. Block 1 abrufen (Genesis-Transaktionen)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/blocks/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "blocks", "1"]
+            },
+            "description": "Gibt Block 1 zurück (mit den 6 Genesis-Transaktionen)"
+          }
+        },
+        {
+          "name": "4. Block 2 abrufen (Alice->Tom + Tom->Julia)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/blocks/2",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "blocks", "2"]
+            },
+            "description": "Gibt Block 2 zurück (mit den neuen Transaktionen)"
+          }
+        },
+        {
+          "name": "5. ERROR TEST - Block nicht vorhanden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/blocks/999",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "blocks", "999"]
+            },
+            "description": "Teste Error-Handling: Block existiert nicht (sollte 404 zurückgeben)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "VALIDIERUNG & STATUS",
+      "item": [
+        {
+          "name": "1. Blockchain validieren",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/isValid",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "isValid"]
+            },
+            "description": "Validiert die Blockchain. Prüft Hash-Integrität, Verkettung und Proof-of-Work (sollte VALID sein)"
+          }
+        },
+        {
+          "name": "2. Status abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "status"]
+            },
+            "description": "Gibt Status-Übersicht: Blockanzahl, Transaktionsanzahl, Difficulty, letzter Block-Hash"
+          }
+        },
+        {
+          "name": "3. Alle Wallets final",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/wallets",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "wallets"]
+            },
+            "description": "Zeigt alle Wallets mit ihren finalen Saldi nach allen Transaktionen"
+          }
+        }
+      ]
+    },
+    {
+      "name": "RESET",
+      "item": [
+        {
+          "name": "1. Blockchain zurücksetzen",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/reset",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "reset"]
+            },
+            "description": "Setzt die Blockchain zurück. Alle Blöcke und Transaktionen werden gelöscht"
+          }
+        },
+        {
+          "name": "2. Status nach Reset",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "status"]
+            },
+            "description": "Überprüfe Status nach Reset (sollte nur Genesis Block + 6 Genesis-Transaktionen haben)"
+          }
+        },
+        {
+          "name": "3. Wallets nach Reset",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/blockchain/wallets",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "blockchain", "wallets"]
+            },
+            "description": "Wallets sollten nach Reset noch existieren (Tom, Julia bleiben mit ihrem Saldo)"
+          }
+        }
+      ]
+    }
+  ]
+}
