@@ -1,228 +1,31 @@
-# 🔗 Blockchain API Dokumentation
+# 🔗 WebChain API Dokumentation
 
-**Version:** 1.0.0  
-**Base URL:** `http://localhost:8080/api/blockchain`  
-**Content-Type:** `application/json`
+**Base URL:** `http://localhost:8080/api/blockchain`
 
 ---
 
-## 📋 Inhaltsverzeichnis
+## 📊 Blockchain Status & Verwaltung
 
-1. [Übersicht](#übersicht)
-2. [Endpoints](#endpoints)
-3. [Data Transfer Objects (DTOs)](#dtos)
-4. [Error Handling](#error-handling)
-5. [Beispiele](#beispiele)
-
----
-
-## 🎯 Übersicht
-
-Die Blockchain API ermöglicht es, eine verteilte Blockchain zu verwalten. Sie können:
-- ✅ Transaktionen hinzufügen
-- ✅ Blöcke minen
-- ✅ Blockchain validieren
-- ✅ Blöcke abrufen
-- ✅ Status überprüfen
-- ✅ Pending Transactions anzeigen
-- ✅ Blockchain zurücksetzen
-
-**Schwierigkeit:** 2 (Blöcke müssen mit 2 führenden Nullen beginnen)
-**Total Endpoints:** 8
-
----
-
-## 🔌 Endpoints
-
-### 1. Transaktion hinzufügen
-
+### 1. Status abrufen
 ```
-POST /api/blockchain/transaction
+GET /status
 ```
-
-**Beschreibung:** Fügt eine neue Transaktion zur Warteschlange (Pending Transactions) hinzu.
-
-**Request Body:**
+**Response:** `200 OK`
 ```json
 {
-  "sender": "Alice",
-  "receiver": "Bob",
-  "amount": 50.0
+  "isValid": true,
+  "blockCount": 3,
+  "difficulty": 2,
+  "lastBlockHash": "00a1b2c3...",
+  "totalTransactions": 5
 }
 ```
 
-**Response (201 Created):**
-```json
-"Transaktion hinzugefügt!"
+### 2. Blockchain validieren
 ```
-
-**Status Codes:**
-- `201 Created` - Transaktion erfolgreich hinzugefügt
-- `400 Bad Request` - Ungültige Daten
-
-**Beispiel mit cURL:**
-```bash
-curl -X POST http://localhost:8080/api/blockchain/transaction \
-  -H "Content-Type: application/json" \
-  -d '{"sender":"Alice","receiver":"Bob","amount":50.0}'
+GET /isValid
 ```
-
----
-
-### 2. Block minen
-
-```
-POST /api/blockchain/mine
-```
-
-**Beschreibung:** Startet den Mining-Prozess. Alle Pending Transactions werden in einen neuen Block gepackt und gemined.
-
-**Request Body:** Keine
-
-**Response (201 Created):**
-```json
-{
-  "index": 1,
-  "timestamp": 1779366938898,
-  "previousHash": "00ba51c9275570d214e8432f4bde23d3276817426e4028063ef9b3166545b163",
-  "transactions": [
-    {
-      "sender": "Alice",
-      "receiver": "Bob",
-      "amount": 50.0,
-      "timestamp": 1779366920000
-    },
-    {
-      "sender": "Bob",
-      "receiver": "Carol",
-      "amount": 20.0,
-      "timestamp": 1779366925000
-    }
-  ],
-  "hash": "003eb58e7048dd1c63fa415fcad1150081f19c30a8c003d90eb790db4ecf7143",
-  "nonce": 266
-}
-```
-
-**Status Codes:**
-- `201 Created` - Block erfolgreich gemined
-- `400 Bad Request` - Keine Transaktionen zum Minen
-
-**Hinweise:**
-- Mining kann je nach Schwierigkeit mehrere Sekunden dauern
-- Nach erfolgreichem Mining werden Pending Transactions geleert
-
-**Beispiel mit cURL:**
-```bash
-curl -X POST http://localhost:8080/api/blockchain/mine
-```
-
----
-
-### 3. Alle Blöcke abrufen
-
-```
-GET /api/blockchain/blocks
-```
-
-**Beschreibung:** Gibt alle Blöcke in der Blockchain zurück.
-
-**Request Body:** Keine
-
-**Response (200 OK):**
-```json
-[
-  {
-    "index": 0,
-    "timestamp": 1779366897871,
-    "previousHash": "0",
-    "transactions": [],
-    "hash": "00ba51c9275570d214e8432f4bde23d3276817426e4028063ef9b3166545b163",
-    "nonce": 107
-  },
-  {
-    "index": 1,
-    "timestamp": 1779366938898,
-    "previousHash": "00ba51c9275570d214e8432f4bde23d3276817426e4028063ef9b3166545b163",
-    "transactions": [
-      {
-        "sender": "Alice",
-        "receiver": "Bob",
-        "amount": 50.0,
-        "timestamp": 1779366920000
-      }
-    ],
-    "hash": "003eb58e7048dd1c63fa415fcad1150081f19c30a8c003d90eb790db4ecf7143",
-    "nonce": 266
-  }
-]
-```
-
-**Status Codes:**
-- `200 OK` - Erfolgreich abgerufen
-
-**Beispiel mit cURL:**
-```bash
-curl http://localhost:8080/api/blockchain/blocks
-```
-
----
-
-### 4. Einzelnen Block abrufen
-
-```
-GET /api/blockchain/blocks/{id}
-```
-
-**Beschreibung:** Gibt einen spezifischen Block nach Index zurück.
-
-**URL Parameter:**
-- `id` (int) - Block Index (0-basiert)
-
-**Response (200 OK):**
-```json
-{
-  "index": 1,
-  "timestamp": 1779366938898,
-  "previousHash": "00ba51c9275570d214e8432f4bde23d3276817426e4028063ef9b3166545b163",
-  "transactions": [
-    {
-      "sender": "Alice",
-      "receiver": "Bob",
-      "amount": 50.0,
-      "timestamp": 1779366920000
-    }
-  ],
-  "hash": "003eb58e7048dd1c63fa415fcad1150081f19c30a8c003d90eb790db4ecf7143",
-  "nonce": 266
-}
-```
-
-**Status Codes:**
-- `200 OK` - Block gefunden
-- `404 Not Found` - Block existiert nicht
-
-**Beispiel mit cURL:**
-```bash
-curl http://localhost:8080/api/blockchain/blocks/1
-```
-
----
-
-### 5. Blockchain validieren
-
-```
-GET /api/blockchain/isValid
-```
-
-**Beschreibung:** Validiert die komplette Blockchain. Prüft:
-- Hash-Integrität aller Blöcke
-- Korrekte Verkettung (previousHash)
-- Proof-of-Work (führende Nullen)
-
-**Request Body:** Keine
-
-**Response (200 OK) - Valid:**
+**Response:** `200 OK` oder `400 BAD_REQUEST`
 ```json
 {
   "isValid": true,
@@ -233,346 +36,641 @@ GET /api/blockchain/isValid
 }
 ```
 
-**Response (400 Bad Request) - Invalid:**
-```json
-{
-  "isValid": false,
-  "message": "Blockchain ungültig",
-  "blockCount": 3,
-  "errorBlock": 2,
-  "errorDescription": "Block 2 hat ungültigen Hash"
-}
+### 3. Blockchain zurücksetzen
 ```
-
-**Mögliche Error Descriptions:**
-- `"Block X hat ungültigen Hash"` - Hash stimmt nicht überein
-- `"Block X zeigt auf falschen vorherigen Block"` - Previous Hash passt nicht
-- `"Block X erfüllt nicht die Proof-of-Work Bedingung"` - Hash beginnt nicht mit führenden Nullen
-
-**Status Codes:**
-- `200 OK` - Blockchain ist gültig
-- `400 Bad Request` - Blockchain ist ungültig
-
-**Beispiel mit cURL:**
-```bash
-curl http://localhost:8080/api/blockchain/isValid
+POST /reset
 ```
-
----
-
-### 6. Status abrufen
-
-```
-GET /api/blockchain/status
-```
-
-**Beschreibung:** Gibt schnelle Statusinformationen zur Blockchain zurück.
-
-**Request Body:** Keine
-
-**Response (200 OK):**
-```json
-{
-  "isValid": true,
-  "blockCount": 3,
-  "difficulty": 2,
-  "lastBlockHash": "003eb58e7048dd1c63fa415fcad1150081f19c30a8c003d90eb790db4ecf7143",
-  "totalTransactions": 5
-}
-```
-
-**Status Codes:**
-- `200 OK` - Erfolgreich abgerufen
-
-**Beispiel mit cURL:**
-```bash
-curl http://localhost:8080/api/blockchain/status
-```
-
----
-
-### 7. Pending Transactions abrufen
-
-```
-GET /api/blockchain/pending-transactions
-```
-
-**Beschreibung:** Gibt alle Transaktionen zurück, die noch nicht gemined wurden (Pending Transactions).
-
-**Request Body:** Keine
-
-**Response (200 OK):**
-```json
-[
-  {
-    "sender": "Alice",
-    "receiver": "Bob",
-    "amount": 50.0,
-    "timestamp": 1779366920000
-  },
-  {
-    "sender": "Bob",
-    "receiver": "Carol",
-    "amount": 30.0,
-    "timestamp": 1779366925000
-  },
-  {
-    "sender": "Carol",
-    "receiver": "David",
-    "amount": 20.0,
-    "timestamp": 1779366930000
-  }
-]
-```
-
-**Status Codes:**
-- `200 OK` - Erfolgreich abgerufen
-- `200 OK` (leeres Array) - Keine ausstehenden Transaktionen
-
-**Hinweise:**
-- Diese Transaktionen werden zum nächsten Block hinzugefügt, wenn Mining gestartet wird
-- Nach erfolgreichem Mining wird diese Liste geleert
-
-**Beispiel mit cURL:**
-```bash
-curl http://localhost:8080/api/blockchain/pending-transactions
-```
-
----
-
-### 8. Blockchain zurücksetzen
-
-```
-POST /api/blockchain/reset
-```
-
-**Beschreibung:** Setzt die gesamte Blockchain zurück. Es wird ein neuer Genesis Block erstellt und alle Daten werden gelöscht. **Warnung: Diese Operation ist nicht rückgängig zu machen!**
-
-**Request Body:** Keine
-
-**Response (200 OK):**
+**Response:** `200 OK`
 ```json
 "Blockchain wurde zurückgesetzt"
 ```
 
-**Status Codes:**
-- `200 OK` - Blockchain erfolgreich zurückgesetzt
-
-**Hinweise:**
-- Alle Blöcke werden gelöscht
-- Alle Pending Transactions werden gelöscht
-- Ein neuer Genesis Block wird automatisch erstellt
-- Die Schwierigkeit bleibt gleich (2)
-
-**Beispiel mit cURL:**
-```bash
-curl -X POST http://localhost:8080/api/blockchain/reset
-```
-
----
-
-## 📦 DTOs
-
-### TransactionDTO
-
+**Fehler:** `500 INTERNAL_SERVER_ERROR`
 ```json
 {
-  "sender": "string",      // Absender der Transaktion
-  "receiver": "string",    // Empfänger der Transaktion
-  "amount": "number"       // Betrag in BTC
-}
-```
-
-### BlockDTO
-
-```json
-{
-  "index": "integer",                    // Block-Position in der Kette
-  "timestamp": "long",                   // Unix Timestamp der Erstellung
-  "previousHash": "string",              // Hash des vorherigen Blocks
-  "transactions": ["TransactionDTO[]"],  // Array von Transaktionen
-  "hash": "string",                      // SHA-256 Hash des Blocks
-  "nonce": "integer"                     // Proof-of-Work Nonce
-}
-```
-
-### StatusDTO
-
-```json
-{
-  "isValid": "boolean",         // Blockchain valid?
-  "blockCount": "integer",      // Anzahl der Blöcke
-  "difficulty": "integer",      // Proof-of-Work Schwierigkeit
-  "lastBlockHash": "string",    // Hash des letzten Blocks
-  "totalTransactions": "integer" // Gesamtanzahl aller Transaktionen
-}
-```
-
-### ValidationResponseDTO
-
-```json
-{
-  "isValid": "boolean",           // Blockchain valid?
-  "message": "string",            // Aussagekräftige Nachricht
-  "blockCount": "integer",        // Anzahl der Blöcke
-  "errorBlock": "integer|null",   // Index des fehlerhaften Blocks (null wenn valid)
-  "errorDescription": "string|null" // Beschreibung des Fehlers (null wenn valid)
+  "status": 500,
+  "message": "Fehler beim Zurücksetzen der Blockchain",
+  "errorCode": "RESET_FAILED",
+  "timestamp": 1718275200000
 }
 ```
 
 ---
 
-## ❌ Error Handling
+## ⛏️ Mining
 
-### Generische Fehler
-
-**404 Not Found:**
-```json
-"Block nicht gefunden"
+### 1. Block minen
 ```
+POST /mine
+Content-Type: application/json
 
-**400 Bad Request:**
-```json
-"Ungültige Anfrageparameter"
+{
+  "minerAddress": "Alice"
+}
 ```
-
-**500 Internal Server Error:**
+**Response:** `201 CREATED`
 ```json
 {
-  "error": "Interner Fehler",
-  "message": "Fehlerbeschreibung"
+  "index": 2,
+  "timestamp": 1718275200000,
+  "previousHash": "00a1b2c3...",
+  "transactions": [
+    {
+      "sender": "Alice",
+      "receiver": "Peter",
+      "amount": 10.0,
+      "timestamp": 1718275100000,
+      "signature": "abc123...",
+      "verified": true
+    }
+  ],
+  "hash": "00xyz789...",
+  "nonce": 156
+}
+```
+
+**Fehler - Miner-Adresse erforderlich:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Miner-Adresse erforderlich!",
+  "errorCode": "INVALID_MINER_ADDRESS",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Miner-Wallet nicht gefunden:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "empfänger nicht gefunden",
+  "errorCode": "MINER_WALLET_NOT_FOUND",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Mining-Fehler:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Mining: ...",
+  "errorCode": "MINING_FAILED",
+  "timestamp": 1718275200000
 }
 ```
 
 ---
 
-## 📚 Beispiele
+## 💸 Transaktionen
 
-### Workflow: Transaktionen hinzufügen und minen
-
-```bash
-# 1. Starte den Server
-java -jar blockchain-web.jar
-
-# 2. Überprüfe Pending Transactions (sollte leer sein)
-curl http://localhost:8080/api/blockchain/pending-transactions
-
-# 3. Füge 3 Transaktionen hinzu
-curl -X POST http://localhost:8080/api/blockchain/transaction \
-  -H "Content-Type: application/json" \
-  -d '{"sender":"Alice","receiver":"Bob","amount":50.0}'
-
-curl -X POST http://localhost:8080/api/blockchain/transaction \
-  -H "Content-Type: application/json" \
-  -d '{"sender":"Bob","receiver":"Carol","amount":30.0}'
-
-curl -X POST http://localhost:8080/api/blockchain/transaction \
-  -H "Content-Type: application/json" \
-  -d '{"sender":"Carol","receiver":"David","amount":20.0}'
-
-# 4. Überprüfe Pending Transactions (sollte 3 haben)
-curl http://localhost:8080/api/blockchain/pending-transactions
-
-# 5. Starte Mining
-curl -X POST http://localhost:8080/api/blockchain/mine
-
-# 6. Überprüfe Pending Transactions (sollte wieder leer sein)
-curl http://localhost:8080/api/blockchain/pending-transactions
-
-# 7. Überprüfe alle Blöcke
-curl http://localhost:8080/api/blockchain/blocks
-
-# 8. Validiere Blockchain
-curl http://localhost:8080/api/blockchain/isValid
-
-# 9. Überprüfe Status
-curl http://localhost:8080/api/blockchain/status
-
-# 10. Setze Blockchain zurück (für neuen Test)
-curl -X POST http://localhost:8080/api/blockchain/reset
+### 1. Transaktion hinzufügen
 ```
+POST /transaction
+Content-Type: application/json
 
-### Schnelltest aller Endpoints
-
-```bash
-# 1. Status
-curl http://localhost:8080/api/blockchain/status
-
-# 2. Add Transaction
-curl -X POST http://localhost:8080/api/blockchain/transaction \
-  -H "Content-Type: application/json" \
-  -d '{"sender":"Test","receiver":"User","amount":100.0}'
-
-# 3. Pending Transactions
-curl http://localhost:8080/api/blockchain/pending-transactions
-
-# 4. Mine
-curl -X POST http://localhost:8080/api/blockchain/mine
-
-# 5. Get Blocks
-curl http://localhost:8080/api/blockchain/blocks
-
-# 6. Get Single Block
-curl http://localhost:8080/api/blockchain/blocks/1
-
-# 7. Validate
-curl http://localhost:8080/api/blockchain/isValid
-
-# 8. Reset
-curl -X POST http://localhost:8080/api/blockchain/reset
-```
-
-### Mit Postman testen
-
-**1. Neuer Block für Transaktionen:**
-- Method: POST
-- URL: `http://localhost:8080/api/blockchain/transaction`
-- Body (JSON):
-```json
 {
   "sender": "Alice",
-  "receiver": "Bob",
+  "receiver": "Peter",
+  "amount": 25.5
+}
+```
+**Response:** `201 CREATED`
+```json
+"Transaktion hinzugefügt!"
+```
+
+**Fehler - Sender erforderlich:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Sender erforderlich!",
+  "errorCode": "INVALID_SENDER",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Empfänger erforderlich:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Empfänger erforderlich!",
+  "errorCode": "INVALID_RECEIVER",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Betrag ungültig:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Betrag muss größer als 0 sein!",
+  "errorCode": "INVALID_AMOUNT",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Nicht genug Saldo:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Nicht genug Saldo!",
+  "errorCode": "TRANSACTION_VALIDATION_FAILED",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Signatur ungültig:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Transaktion-Signatur ungültig!",
+  "errorCode": "TRANSACTION_VALIDATION_FAILED",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Empfänger-Wallet nicht gefunden:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Wallet 'Bob' existiert nicht!",
+  "errorCode": "TRANSACTION_ERROR",
+  "timestamp": 1718275200000
+}
+```
+
+### 2. Ausstehende Transaktionen abrufen
+```
+GET /pending-transactions
+```
+**Response:** `200 OK`
+```json
+[
+  {
+    "sender": "Alice",
+    "receiver": "Peter",
+    "amount": 10.0,
+    "timestamp": 1718275100000,
+    "signature": "abc123...",
+    "verified": true
+  }
+]
+```
+
+**Fehler:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Abrufen der Transaktionen",
+  "errorCode": "INTERNAL_ERROR",
+  "timestamp": 1718275200000
+}
+```
+
+---
+
+## 📦 Blöcke
+
+### 1. Alle Blöcke abrufen
+```
+GET /blocks
+```
+**Response:** `200 OK`
+```json
+[
+  {
+    "index": 0,
+    "timestamp": 1718275000000,
+    "previousHash": "0",
+    "transactions": [],
+    "hash": "00genesis...",
+    "nonce": 0
+  },
+  {
+    "index": 1,
+    "timestamp": 1718275100000,
+    "previousHash": "00genesis...",
+    "transactions": [...],
+    "hash": "00a1b2c3...",
+    "nonce": 42
+  }
+]
+```
+
+**Fehler:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Abrufen der Blöcke",
+  "errorCode": "INTERNAL_ERROR",
+  "timestamp": 1718275200000
+}
+```
+
+### 2. Einen Block abrufen (nach Index)
+```
+GET /blocks/1
+```
+**Response:** `200 OK`
+```json
+{
+  "index": 1,
+  "timestamp": 1718275100000,
+  "previousHash": "00genesis...",
+  "transactions": [...],
+  "hash": "00a1b2c3...",
+  "nonce": 42
+}
+```
+
+**Fehler - Negativer Index:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Block-Index kann nicht negativ sein!",
+  "errorCode": "INVALID_BLOCK_INDEX",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Block nicht gefunden:** `404 NOT_FOUND`
+```json
+{
+  "status": 404,
+  "message": "Block mit Index 99 nicht gefunden",
+  "errorCode": "BLOCK_NOT_FOUND",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Interner Fehler:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Abrufen des Blocks",
+  "errorCode": "INTERNAL_ERROR",
+  "timestamp": 1718275200000
+}
+```
+
+---
+
+## 👛 Wallets & Konten
+
+### 1. Alle Wallets abrufen
+```
+GET /wallets
+```
+**Response:** `200 OK`
+```json
+[
+  {
+    "address": "Alice",
+    "balance": 185.0,
+    "createdAt": 1718275000000
+  },
+  {
+    "address": "Peter",
+    "balance": 110.0,
+    "createdAt": 1718275000000
+  },
+  {
+    "address": "Nina",
+    "balance": 100.0,
+    "createdAt": 1718275000000
+  },
+  {
+    "address": "system",
+    "balance": 9605.0,
+    "createdAt": 1718275000000
+  }
+]
+```
+
+**Fehler:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Abrufen der Wallets",
+  "errorCode": "INTERNAL_ERROR",
+  "timestamp": 1718275200000
+}
+```
+
+### 2. Balance eines Wallets abrufen
+```
+GET /wallets/Alice
+```
+**Response:** `200 OK`
+```json
+185.0
+```
+
+**Fehler - Adresse erforderlich:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Wallet-Adresse erforderlich!",
+  "errorCode": "INVALID_ADDRESS",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Wallet nicht gefunden:** `404 NOT_FOUND`
+```json
+{
+  "status": 404,
+  "message": "Wallet 'Bob' nicht gefunden",
+  "errorCode": "WALLET_NOT_FOUND",
+  "timestamp": 1718275200000
+}
+```
+
+### 3. Neues Wallet erstellen
+```
+POST /wallets
+Content-Type: application/json
+
+"Bob"
+```
+**Response:** `201 CREATED`
+```json
+{
+  "address": "Bob",
+  "balance": 0.0,
+  "createdAt": 1718275200000
+}
+```
+
+**Fehler - Adresse erforderlich:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Wallet-Adresse erforderlich!",
+  "errorCode": "INVALID_ADDRESS",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Erstellung fehlgeschlagen:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Erstellen des Wallets: ...",
+  "errorCode": "WALLET_CREATION_FAILED",
+  "timestamp": 1718275200000
+}
+```
+
+---
+
+## ⚙️ Konfiguration
+
+### 1. Schwierigkeit ändern (Difficulty)
+```
+POST /difficulty
+Content-Type: application/json
+
+{
+  "difficulty": 3
+}
+```
+**Response:** `200 OK`
+```json
+"Mining-Schwierigkeit auf 3 gesetzt"
+```
+
+**Fehler - Difficulty ≤ 0:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Difficulty muss größer als 0 sein!",
+  "errorCode": "INVALID_DIFFICULTY",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Difficulty > 10:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Difficulty kann maximal 10 sein!",
+  "errorCode": "DIFFICULTY_EXCEEDS_MAX",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Update fehlgeschlagen:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Aktualisieren der Schwierigkeit",
+  "errorCode": "DIFFICULTY_UPDATE_FAILED",
+  "timestamp": 1718275200000
+}
+```
+
+### 2. Mining-Reward ändern
+```
+POST /reward
+Content-Type: application/json
+
+{
   "amount": 50.0
 }
 ```
+**Response:** `200 OK`
+```json
+"Mining-Reward auf 50.0 BTC aktualisiert"
+```
 
-**2. Mining starten:**
-- Method: POST
-- URL: `http://localhost:8080/api/blockchain/mine`
-- Body: (leer)
+**Fehler - Reward ≤ 0:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Reward muss größer als 0 sein!",
+  "errorCode": "INVALID_REWARD_AMOUNT",
+  "timestamp": 1718275200000
+}
+```
 
-**3. Blöcke abrufen:**
-- Method: GET
-- URL: `http://localhost:8080/api/blockchain/blocks`
+**Fehler - Reward > 1000:** `400 BAD_REQUEST`
+```json
+{
+  "status": 400,
+  "message": "Reward kann maximal 1000 BTC sein!",
+  "errorCode": "REWARD_EXCEEDS_MAX",
+  "timestamp": 1718275200000
+}
+```
+
+**Fehler - Update fehlgeschlagen:** `500 INTERNAL_SERVER_ERROR`
+```json
+{
+  "status": 500,
+  "message": "Fehler beim Aktualisieren des Rewards",
+  "errorCode": "REWARD_UPDATE_FAILED",
+  "timestamp": 1718275200000
+}
+```
 
 ---
 
-## ⚡ Performance & Limits
+## 📋 Fehlerbehandlung
 
-- **Mining-Zeit:** 1-5 Sekunden (abhängig von Schwierigkeit)
-- **Max. Transaktionen pro Block:** Unbegrenzt
-- **Blockchain-Größe:** Im RAM begrenzt
+### ErrorResponseDTO Format
+```json
+{
+  "status": 400,
+  "message": "Benutzerfreundliche Fehlermeldung",
+  "errorCode": "MASCHINENLESBARER_CODE",
+  "timestamp": 1718275200000
+}
+```
+
+### HTTP Status Codes
+- `200 OK` - Erfolgreiche GET-Anfrage
+- `201 CREATED` - Erfolgreiche POST-Anfrage
+- `400 BAD_REQUEST` - Ungültige Anfrage/Validierungsfehler
+- `404 NOT_FOUND` - Ressource nicht gefunden
+- `500 INTERNAL_SERVER_ERROR` - Server-Fehler
+
+### Error Codes Übersicht
+| Code | Status | Bedeutung |
+|------|--------|-----------|
+| `INVALID_SENDER` | 400 | Sender nicht angegeben |
+| `INVALID_RECEIVER` | 400 | Empfänger nicht angegeben |
+| `INVALID_AMOUNT` | 400 | Betrag ≤ 0 |
+| `INVALID_MINER_ADDRESS` | 400 | Miner-Adresse nicht angegeben |
+| `INVALID_ADDRESS` | 400 | Wallet-Adresse nicht angegeben |
+| `INVALID_BLOCK_INDEX` | 400 | Block-Index negativ |
+| `INVALID_DIFFICULTY` | 400 | Difficulty ≤ 0 |
+| `INVALID_REWARD_AMOUNT` | 400 | Reward ≤ 0 |
+| `BLOCK_NOT_FOUND` | 404 | Block nicht vorhanden |
+| `WALLET_NOT_FOUND` | 404 | Wallet existiert nicht |
+| `DIFFICULTY_EXCEEDS_MAX` | 400 | Difficulty > 10 |
+| `REWARD_EXCEEDS_MAX` | 400 | Reward > 1000 |
+| `TRANSACTION_VALIDATION_FAILED` | 400 | Transaktions-Validierung fehlgeschlagen |
+| `MINING_FAILED` | 500 | Mining-Fehler |
+| `WALLET_CREATION_FAILED` | 500 | Wallet-Erstellung fehlgeschlagen |
+| `INTERNAL_ERROR` | 500 | Unerwarteter Fehler |
+
+---
+
+## 🧪 Beispiel: Kompletter Workflow
+
+```bash
+# 1. Status überprüfen
+curl http://localhost:8080/api/blockchain/status
+
+# 2. Neues Wallet erstellen
+curl -X POST http://localhost:8080/api/blockchain/wallets \
+  -H "Content-Type: application/json" \
+  -d '"Bob"'
+
+# 3. Transaktion hinzufügen (Validierung wird durchgeführt)
+curl -X POST http://localhost:8080/api/blockchain/transaction \
+  -H "Content-Type: application/json" \
+  -d '{"sender":"system","receiver":"Bob","amount":50}'
+
+# 4. Mining durchführen (Bob ist Miner)
+curl -X POST http://localhost:8080/api/blockchain/mine \
+  -H "Content-Type: application/json" \
+  -d '{"minerAddress":"Bob"}'
+
+# 5. Bob's Balance überprüfen (sollte 50 + Mining-Reward sein)
+curl http://localhost:8080/api/blockchain/wallets/Bob
+
+# 6. Alle Blöcke anschauen
+curl http://localhost:8080/api/blockchain/blocks
+```
+
+---
+
+## 🧪 Beispiel: Fehlerbehandlung testen
+
+```bash
+# Test 1: Ungültige Miner-Adresse
+curl -X POST http://localhost:8080/api/blockchain/mine \
+  -H "Content-Type: application/json" \
+  -d '{"minerAddress":""}'
+
+# Response:
+{
+  "status": 400,
+  "message": "Miner-Adresse erforderlich!",
+  "errorCode": "INVALID_MINER_ADDRESS",
+  "timestamp": 1718275200000
+}
+
+# Test 2: Zu hoher Reward
+curl -X POST http://localhost:8080/api/blockchain/reward \
+  -H "Content-Type: application/json" \
+  -d '{"amount":5000}'
+
+# Response:
+{
+  "status": 400,
+  "message": "Reward kann maximal 1000 BTC sein!",
+  "errorCode": "REWARD_EXCEEDS_MAX",
+  "timestamp": 1718275200000
+}
+
+# Test 3: Block nicht gefunden
+curl http://localhost:8080/api/blockchain/blocks/999
+
+# Response:
+{
+  "status": 404,
+  "message": "Block mit Index 999 nicht gefunden",
+  "errorCode": "BLOCK_NOT_FOUND",
+  "timestamp": 1718275200000
+}
+```
+
+---
+
+## 📊 Datentypen
+
+| Feld | Typ | Beschreibung |
+|------|-----|-------------|
+| address | String | Wallet-Adresse |
+| amount | double | Geldmenge in BTC |
+| balance | double | Wallet-Saldo |
+| difficulty | int | Mining-Schwierigkeit (0-10) |
+| index | int | Block-Nummer in der Chain |
+| nonce | int | Proof-of-Work Zähler |
+| hash | String | SHA-256 Block-Hash |
+| previousHash | String | Hash des vorherigen Blocks |
+| timestamp | long | Unix-Timestamp in ms |
+| signature | String | Base64-kodierte RSA-Signatur |
+| verified | boolean | Transaktion validiert? |
+| status | int | HTTP Status Code |
+| errorCode | String | Fehler-Code |
+| message | String | Benutzerfreundliche Nachricht |
 
 ---
 
 ## 🔐 Sicherheit
 
-⚠️ **Dies ist eine Lernimplementierung, NICHT für Produktion!**
-
-- Keine Authentifizierung
-- Keine Verschlüsselung
-- Keine Raten限制
-- Transaktionen sind pseudonym, nicht privat
-
----
-
-## 📝 Hinweise
-
-- Genesis Block (Index 0) wird automatisch erstellt
-- Alle Hashes sind SHA-256
-- Timestamps sind Unix Milliseconds
-- Die Blockchain ist persistent im RAM (wird bei Neustart zurückgesetzt)
+- ✅ Transaktionen werden mit RSA-2048 signiert
+- ✅ Signaturen werden bei jeder Transaktion validiert
+- ✅ Blöcke werden mit SHA-256 gehashed
+- ✅ Blockchain wird auf Integrität überprüft
+- ✅ Nur Wallets mit ausreichend Saldo können überweisen
+- ✅ Umfassende Input-Validierung auf allen Endpoints
 
 ---
 
-**Letzte Aktualisierung:** 2025-05-21
+## 📝 Hinweise für Frontend
+
+1. **Polling:** Status/Blöcke müssen regelmäßig abgerufen werden (z.B. alle 2s)
+2. **Timestamps:** `timestamp` ist in Millisekunden (nicht Sekunden!)
+3. **Wallet-Erstellung:** Automatisch mit 0 BTC erstellt
+4. **Genesis:** Der erste Block (Index 0) hat keine Transaktionen
+5. **Error Handling:** Immer auf `errorCode` prüfen für spezifische UI-Reaktionen
+6. **Standardwerte:**
+    - Difficulty: 2
+    - Mining-Reward: 10 BTC
+    - Vorbereitete Wallets: Alice, Peter, Nina (je 100 BTC nach Genesis-Mining)
+    - System-Wallet: 10.000 BTC

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blockchain</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#">Wilkommen bei WebChain</a>
+        <div id="myWallet"></div>
+    </nav>
+</header>
+
+<main>
+    <label>Addresse: </label>
+    <input type="text"  id="walletAddress" placeholder="Adresse">
+    <button onclick="getWallet(document.getElementById('walletAddress').value)">absenden</button>
+</main>
+
+<script src="../js/wallet.js"></script>
+</body>
+</html>
