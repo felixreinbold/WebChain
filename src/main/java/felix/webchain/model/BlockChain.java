@@ -12,6 +12,7 @@ public class BlockChain {
     private List<Block> chain;
     private int difficulty;
     private List<Transaction> pendingTransactions;
+    private double amount = 10;
 
     public BlockChain(int difficulty) {
         this.difficulty = difficulty;
@@ -22,5 +23,9 @@ public class BlockChain {
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public void setAmount(double amount){
+        this.amount = amount;
     }
 }

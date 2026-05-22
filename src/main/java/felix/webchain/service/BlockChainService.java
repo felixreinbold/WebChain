@@ -5,14 +5,16 @@ import felix.webchain.dto.ValidationResponseDTO;
 import felix.webchain.model.Block;
 import felix.webchain.model.BlockChain;
 import felix.webchain.model.Transaction;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class BlockChainService {
 
     private BlockChain blockChain;
-    private BlockService blockService = new BlockService();
+    private static BlockService blockService = new BlockService();
     private WalletService walletService = new WalletService();
 
     public BlockChainService() {
@@ -30,7 +32,7 @@ public class BlockChainService {
 
     }
 
-    public void mineBlock(){
+    public void mineBlock(String minerAddress){
 
         for (Transaction tx : blockChain.getPendingTransactions()) {
             walletService.executeTransaction(tx.getSender(), tx.getReceiver(), tx.getAmount());
@@ -43,7 +45,7 @@ public class BlockChainService {
                 new ArrayList<>(blockChain.getPendingTransactions())
         );
         blockService.mineBlock(newBlock, blockChain.getDifficulty());
-        walletService.addReward("system", 10.0);
+        walletService.addReward(minerAddress, blockChain.getAmount());
         blockChain.getChain().add(newBlock);
         clearPendingTransaction();
     }

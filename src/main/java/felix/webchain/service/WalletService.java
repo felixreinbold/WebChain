@@ -94,7 +94,8 @@ public class WalletService {
     }
 
     public void addReward(String minerAddress, double amount){
-
+        //hier muss ich noch implementieren dass es eine fest definierten
+        // Reward gibt der sich ändern kann am besten sollte er in der BlockChain definiert sein
         Wallet empfänger = wallets.get(minerAddress);
 
         if(empfänger==null){

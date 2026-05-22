@@ -24,7 +24,8 @@ public class BlockChainController {
 
 
     private final HandlerMapping resourceHandlerMapping;
-    private BlockChainService blockChainService = new BlockChainService();
+    @Autowired
+    private BlockChainService blockChainService;
 
 
     public BlockChainController(@Nullable HandlerMapping resourceHandlerMapping) {
@@ -47,11 +48,18 @@ public class BlockChainController {
     }
 
     @PostMapping("/mine")
-    public ResponseEntity<?> mine(){
+    public ResponseEntity<?> mine(@RequestBody MineDTO dto){
 
-        blockChainService.mineBlock();
+        if(dto.getMinerAddress()==null || dto.getMinerAddress().trim().isEmpty()){
+            return new ResponseEntity<>("Miner-Adresse erforderlich!",HttpStatus.BAD_REQUEST);
+        }
+        try {
+            blockChainService.mineBlock(dto.getMinerAddress());
 
-        return new ResponseEntity<>(blockChainService.getLastBlock(), HttpStatus.CREATED);
+            return new ResponseEntity<>(blockChainService.getLastBlock(), HttpStatus.CREATED);
+        }catch(IllegalArgumentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
     }
 
