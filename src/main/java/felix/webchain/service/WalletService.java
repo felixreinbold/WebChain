@@ -105,6 +105,8 @@ public class WalletService {
         empfänger.setBalance(empfänger.getBalance()+amount);
     }
 
+
+
     public double getBalance(String address){
         Wallet wallet = wallets.get(address);
         if(wallet==null){

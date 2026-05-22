@@ -212,4 +212,8 @@ public class BlockChainService {
         return this.blockChain;
     }
 
+    public void changeReward(double amount){
+        blockChain.setAmount(amount);
+    }
+
 }

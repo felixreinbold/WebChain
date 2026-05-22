@@ -159,6 +159,30 @@ public class BlockChainController {
 
         return new ResponseEntity<>(dto.getDifficulty(), HttpStatus.CREATED);
     }
+    @PostMapping ("/reward")
+    public ResponseEntity<?> updateDifficulty(@RequestBody RewardAmountDTO dto) {
+
+        if (dto.getAmount() <= 0) {
+            return new ResponseEntity<>(
+                    "Reward muss größer als 0 sein!",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (dto.getAmount() > 1000) {
+            return new ResponseEntity<>(
+                    "Reward kann maximal 1000 BTC sein!",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        blockChainService.getBlockChain().setAmount(dto.getAmount());
+
+        return new ResponseEntity<>(
+                "Mining-Reward auf " + dto.getAmount() + " BTC aktualisiert",
+                HttpStatus.OK
+        );
+    }
 
 
 }
