@@ -1,0 +1,43 @@
+.block {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+    width: 80%;
+}
+
+.block:hover {
+    border-color: #999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.block p {
+    margin: 8px 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.block h6 {
+    margin: 0 0 6px 0;
+    font-size: 11px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+.block-index {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.block-hash {
+    font-family: monospace;
+    font-size: 11px;
+    color: #777;
+    word-break: break-all;
+}

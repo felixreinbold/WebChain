@@ -67,7 +67,7 @@ async function getWallet(address) {
     if (!address || address.trim() === "") {
         myWallet.innerHTML = `
             <div class="alert alert-danger">
-                <h5>❌ Fehler!</h5>
+                <h5>Fehler!</h5>
                 <p>Wallet-Adresse erforderlich!</p>
             </div>
         `;
@@ -98,11 +98,9 @@ async function getWallet(address) {
         localStorage.setItem("address", wallet.address);
 
         myWallet.innerHTML = `
-            <div class="alert alert-success">
-                <h5> Wallet gefunden!</h5>
+            <div>
                 <p><strong>Adresse:</strong> ${wallet.address}</p>
                 <p><strong>Balance:</strong> ${wallet.balance} BTC</p>
-                <p><strong>Erstellt:</strong> ${new Date(wallet.createdAt).toLocaleString()}</p>
             </div>
         `;
 
@@ -115,4 +113,11 @@ async function getWallet(address) {
             </div>
         `;
     }
+}
+
+function logout(){
+    localStorage.removeItem("address");
+    const myWallet = document.getElementById("myWallet");
+    myWallet.innerHTML="";
+
 }

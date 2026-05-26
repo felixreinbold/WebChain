@@ -4,21 +4,114 @@
     <meta charset="UTF-8">
     <title>Blockchain</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/block.css" rel="stylesheet">
+    <link href="../css/transaction.css" rel="stylesheet">
+    <link href="../css/mining-logs.css" rel="stylesheet">
 </head>
 <body>
 <header>
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="#">Wilkommen bei WebChain</a>
         <div id="myWallet"></div>
+        <button onclick="logout()">Logout</button>
+        <button onclick="window.location.href='../index.html'">
+            Zurück
+        </button>
+        <label>Addresse: </label>
+        <input type="text"  id="walletAddress" placeholder="Adresse">
+        <button onclick="getWallet(document.getElementById('walletAddress').value)">absenden</button>
     </nav>
 </header>
 
-<main>
-    <label>Addresse: </label>
-    <input type="text"  id="walletAddress" placeholder="Adresse">
-    <button onclick="getWallet(document.getElementById('walletAddress').value)">absenden</button>
+<main class="container-fluid mt-4">
+
+    <div id="dashboard-container" class="row">
+        <div id="configuration-container" class="col-lg-6 row">
+            <h3>Configurations</h3>
+
+            <div id="difficulty-container" class="col-lg-6">
+                <h6>Mining Aufwand ändern</h6>
+                <input type="number" id="difficulty-input" placeholder="schwierigkeit">
+                <button onclick="setDifficulty()">confirm</button>
+            </div>
+
+
+            <div id="mining-reward-contrainer">
+                <h6>Mining Reward ändern</h6>
+                <input type="number" id="reward-input" placeholder="reward">
+                <button>confirm</button>
+            </div>
+            <div id="config-feedback-container" class="col-lg-6">
+
+            </div>
+        </div>
+
+        <div id="stats-container" class="col-lg-6">
+            <h3>Stats</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="transaction-container" class="col-lg-6">
+            <h3>Transaktion durchführen</h3>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label >Sender:</label>
+                    <input type="text" id="sender" placeholder="Sender">
+
+                    <label>Empfänger:</label>
+                    <input type="text"  id="receiver" placeholder="Empfänger">
+
+                    <label>Anzahl:</label>
+                    <input type="number"  id="amount" placeholder="Bitcoin">
+
+                    <button  onclick="addTransaction()">Send</button>
+                </div>
+
+                <div class="col-md-6">
+                    <div id="transaction-feedback-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mining-container" class="col-lg-6">
+            <h3>Mining</h3>
+            <button onclick="mineBlock()">Mine</button>
+            <button onclick="window.location.reload()">Reload</button>
+
+
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-lg-6">
+            <h3>Blöcke</h3>
+            <div id="blocks"></div>
+        </div>
+
+        <div class="col-lg-6">
+            <h3>Ausstehende Transaktionen</h3>
+            <div id="pending-transaction-container">
+
+            </div>
+        </div>
+    </div>
+
 </main>
 
 <script src="../js/wallet.js"></script>
+<script src="../js/block.js"></script>
+<script src="../js/mine.js"></script>
+<script src="../js/transaction.js"></script>
+<script src="../js/stats.js"></script>
+<script src="../js/config.js"></script>
+<script>
+    window.addEventListener("load", () => {
+        getBlocks();
+        getPendingTransactions();
+        getStatus();
+    });
+</script>
 </body>
 </html>

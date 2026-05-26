@@ -11,6 +11,8 @@
     <header>
         <nav class="navbar navbar-light bg-light">
             <a class="navbar-brand" href="#">Wilkommen bei WebChain</a>
+            <div id="myWallet"></div>
+            <button onclick="logout()">Logout</button>
         </nav>
     </header>
 
@@ -24,5 +26,19 @@
 
     </main>
 
+<script src="./js/wallet.js"></script>
+<script>
+    // Beim Laden: Letztes Wallet anzeigen
+    window.addEventListener("load", () => {
+        const savedAddress = localStorage.getItem("address");  // ← getItem!
+
+        if (savedAddress) {
+            console.log("Lade gespeichertes Wallet:", savedAddress);
+            getWallet(savedAddress);  // ← NUR EINMAL!
+        } else {
+            console.log("Kein gespeichertes Wallet gefunden");
+        }
+    });
+</script>
 </body>
 </html>
